@@ -8,23 +8,10 @@ const cors = require('cors');
 
 const morgan = require('morgan');
 const { readdirSync } = require('fs');
-const { test } = require('./mysql');
 
 //test();
 
 module.exports=app;
-// //connection string
-// var connectionString = process.env.DATABASE_MSSQL;
-
-// sql
-//   .connect(connectionString)
-//   .then(() => {
-//     console.log('MsSql Connected.');
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
-
 
 //middlewares
 app.use(morgan('dev'));
@@ -59,15 +46,6 @@ app.use("/", (req, res) => {
   res.json({ message: "Api is working..." });
 });
 
-
-// const getproductid=async ()=>{
-//   const dc_ProductId=await get_DC_ProductIdByProductId(10);
-
-//   console.log('getDC_ProductIdByProductId',dc_ProductId);
-  
-// }
-
-// getproductid();
 
 //port
 const port = process.env.PORT || 7000;
