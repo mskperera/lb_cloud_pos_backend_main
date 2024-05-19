@@ -29,8 +29,6 @@ function generateRandomString(length) {
     .slice(0, length);
 }
 
-const dumpFile =
-  "F:/Projects/Ongoing_Projects/Legendbit_POS_cloud/backup_db_mysql/dev_db_dumps/lbposc_light_dump_dev.sql";
 
 exports.restoreDatabase_srv = async (hostName, dbName, dumpFile) => {
   try {
@@ -58,14 +56,15 @@ exports.restoreDatabase_srv = async (hostName, dbName, dumpFile) => {
   }
 };
 
-const setupTenant_srv = async (hostName, accUserName, accPassword,displayName) => {
+const setupTenant_srv = async (hostName, accUserName, accPassword,displayName,dumpFile) => {
   try {
+
 
     const tenantservres = await get_tenantServerDetailsByHostName_sql(hostName);
     if (tenantservres.exception) {
       return tenantservres;
     }
-
+    console.log('tenantservres.records;',tenantservres.records)
     //server Admincred
     const { userName, password, port, connectionLimit } = tenantservres.records;
     const adminUser = userName; //"serverAdmin";
@@ -156,7 +155,10 @@ exports.setupTenantToCustomServer_srv = async (
 ) => {
   try {
 
-    return await setupTenant_srv(hostName,accEmail, accPassword);
+
+    const dumpFile2 =process.env.LATEST_RELEASE_DUMP_PATH;
+
+    return await setupTenant_srv(hostName,accEmail, accPassword,accEmail,dumpFile2);
 
   } catch (err) {
     console.log("setupTenantToCustomServer_srv()-> err :", err);
