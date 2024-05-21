@@ -197,7 +197,7 @@ exports.backupDatabaseTo_live_db_dumps_srv = async (
     const adminUser = userName; //"serverAdmin";
     const adminPassword = password; //"admin@123";
 
-    const dumpFilePath = `F:/Projects/Ongoing_Projects/Legendbit_POS_cloud/backup_db_mysql/live_db_dumps`;
+    const dumpFilePath =process.env.LIVE_DB_BACKUP_PATH;// `F:/Projects/Ongoing_Projects/Legendbit_POS_cloud/backup_db_mysql/live_db_dumps`;
     const dumpFile = `${dumpFilePath}/${dumpFileName}.sql`;
     return await backupMySQLDatabase_shcmd(
       hostName,
@@ -263,7 +263,7 @@ exports.removeTenancySetup_srv = async (tenantId) => {
     console.log("dbdate:", dbdate);
 
     const dumpFileName = `${dbName}_${dbdate}`;
-    const dumpFilePath = `F:/Projects/Ongoing_Projects/Legendbit_POS_cloud/backup_db_mysql/removed_db_dumps`;
+    const dumpFilePath =process.env.REMOVED_TENANT_DB_BACKUP_PATH; //`F:/Projects/Ongoing_Projects/Legendbit_POS_cloud/backup_db_mysql/removed_db_dumps`;
     const dumpFile = `${dumpFilePath}/${dumpFileName}.sql`;
     const backupDbRes = await backupMySQLDatabase_shcmd(
       hostName,
