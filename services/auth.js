@@ -91,7 +91,7 @@ exports.verifySignUp_srv = async (userName, displayName) => {
       //1.check user exists in main db; if not exists() return faild;
       const userRes = await userAccount_select_sql(userName);
       if (!userRes.records) {
-        return {exception:{message:"Invalid username."}}
+        return {exception:{message:"Invalid username or password."}}
       }
   
       const tenentDetailsRes = await get_connectionDetails_by_accountName_sql(userName);
