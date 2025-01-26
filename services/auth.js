@@ -1,5 +1,5 @@
 const { getTenant } = require("../mysql/tenantList");
-const { encryptPassword } = require("../shared/encrypt");
+const { encryptPassword } = require("../utils/encrypt");
 const {userRegistration_select_sql, userPassword_update_sql, userAssignedStores_select_sql } = require("../sql/auth");
 const { get_tenantServerDetailsByIsCurrent_sql, get_connectionDetails_by_accountName_sql, user_verification_delete_sql } = require("../sql/operational");
 const { userAccount_select_sql } = require("../sql/user");

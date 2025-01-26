@@ -18,7 +18,7 @@ const {
   restoreDatabase_shcmd
 } = require("../sql_shell_commands/operational");
 const { getTenant } = require("../mysql/tenantList");
-const { encryptPassword } = require("../shared/encrypt");
+const { encryptPassword } = require("../utils/encrypt");
 const { userRegistration_insert, userRegistration_insert_sql } = require("../sql/auth");
 
 // Function to generate a random string of a specified length

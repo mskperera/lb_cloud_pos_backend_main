@@ -3,12 +3,12 @@ const {
   mainDbConnection_error_handler_pool,
 } = require("../mysql/main_db_connection");
 const mysql = require("mysql2");
-const { SP_STATUS } = require("../constants");
+const { SP_STATUS } = require("../constants/constants");
 const {
   executeStoredProcedureWithOutputParamsByPool,
   executeSqlQueryWithOutputParamsByPool,
 } = require("../mysql/sql_executer");
-const {CONSOLE_TEXT_COLORS} =require('../constants')
+const {CONSOLE_TEXT_COLORS} =require('../constants/constants')
 const {consoleSuccessText,consoleErrorText,consoleExceptionText }=CONSOLE_TEXT_COLORS;
 
 
