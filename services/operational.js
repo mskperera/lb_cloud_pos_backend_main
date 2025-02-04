@@ -387,3 +387,17 @@ exports.createUserAccountForDb_srv = async (dbUsername,dbPassword,dbName,hostNam
     throw error;
   }
 };
+
+
+exports.getConnectionDetailsByTenantId_srv = async (tenantId) => {
+  try {
+    const result = await get_connectionDetails_by_tenantId_sql(tenantId);
+    if (result.exception) {
+      return result;
+    }
+    return result;
+  } catch (error) {
+    console.log("getConnectionDetailsByTenantId_srv()-> err :", error);
+    throw error;
+  }
+};

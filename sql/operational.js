@@ -509,3 +509,26 @@ exports.user_verification_delete_sql = async (
     throw error;
   }
 };
+
+exports.get_connectionDetails_by_tenantId_sql = async (tenantId) => {
+  try {
+    const procedureParameters = [tenantId];
+    const procedureOutputParameters = ["responseStatus", "outputMessage"];
+    const procedureName = "get_connectionDetails_by_tenantId";
+    const result = await executeStoredProcedureWithOutputParamsByPool(
+      procedureName,
+      procedureParameters,
+      procedureOutputParameters,
+      mainDbConnection_pool
+    );
+    const { responseStatus, outputMessage } = result.outputValues;
+
+    if (responseStatus === SP_STATUS.failed) {
+      throw { message: outputMessage };
+    }
+
+    return result.results[0][0];
+  } catch (error) {
+    throw error;
+  }
+};

@@ -145,6 +145,8 @@ exports.verifySignUp_srv = async (userName, displayName) => {
       return {
         accessToken,
         message: "Successful login has been completed.",
+        uName,email,displayName,profilePic
+        
       };
     } catch (error) {
         console.log("login_srv()-> err :", error);

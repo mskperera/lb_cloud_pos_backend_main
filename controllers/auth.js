@@ -119,7 +119,9 @@ exports.login_ctrl = async (req, res) => {
       httpOnly: true,
       expiresIn: "1d",
     });
-    res.status(200).json({ accessToken: loginRes.accessToken });
+
+  const {uName,email,displayName,profilePic}=  loginRes;
+    res.status(200).json({ accessToken: loginRes.accessToken,uName,email,displayName,profilePic });
 
     //res.status(200).json(loginRes );
   } catch (error) {
