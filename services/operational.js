@@ -18,8 +18,8 @@ const {
   restoreDatabase_shcmd
 } = require("../sql_shell_commands/operational");
 const { getTenant } = require("../mysql/tenantList");
-const { encryptPassword } = require("../utils/encrypt");
 const { userRegistration_insert, userRegistration_insert_sql } = require("../sql/auth");
+const { hashPassword } = require("../utils/bcryptHash");
 
 // Function to generate a random string of a specified length
 function generateRandomString(length) {
@@ -121,7 +121,7 @@ const setupTenant_srv = async (hostName, accUserName, accPassword,displayName,du
     //4. register user in the tenant database
     const tenant = await getTenant(tenantId);
     const passwordSalt = bcrypt.genSaltSync(10);
-    const passwordHash = encryptPassword(accPassword, passwordSalt);
+    const passwordHash = hashPassword(accPassword);
 
     const userRegRes = await userRegistration_insert_sql(
       tenant,
