@@ -6,13 +6,13 @@ const {
 const {CONSOLE_TEXT_COLORS} =require('../constants/constants')
 const {consoleSuccessText,consoleErrorText,consoleExceptionText }=CONSOLE_TEXT_COLORS;
 
-exports.userRegistration_select_sql = async (tenant, userName) => {
-  const functionName = "userRegistration_select_sql()";
+exports.userRegistration_select_by_userName_sql = async (tenant, userName) => {
+  const functionName = "userRegistration_select_by_userName_sql()";
   try {
     const { pool } = tenant;
     const procedureParameters = [userName];
     const procedureOutputParameters = ["responseStatus", "outputMessage"];
-    const procedureName = "userRegistration_select";
+    const procedureName = "userRegistration_select_by_userName";
     const result = await executeStoredProcedureWithOutputParamsByPool(
       procedureName,
       procedureParameters,

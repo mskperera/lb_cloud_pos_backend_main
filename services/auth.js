@@ -1,6 +1,6 @@
 const { getTenant } = require("../mysql/tenantList");
 const { encryptPassword } = require("../utils/encrypt");
-const {userRegistration_select_sql, userPassword_update_sql, userAssignedStores_select_sql } = require("../sql/auth");
+const {userPassword_update_sql, userAssignedStores_select_sql, userRegistration_select_by_userName_sql } = require("../sql/auth");
 const { get_tenantServerDetailsByIsCurrent_sql, get_connectionDetails_by_accountName_sql, user_verification_delete_sql } = require("../sql/operational");
 const { userAccount_select_sql } = require("../sql/user");
 const { user_verification_insert_sql, user_verification_select_sql } = require("../sql/verification");
@@ -106,7 +106,7 @@ exports.verifySignUp_srv = async (userName, displayName) => {
         jwtSecret,
       } = tenentDetailsRes.records;
       const tenant = await getTenant(tenantId);
-      const {records} = await userRegistration_select_sql(tenant, userName);
+      const {records} = await userRegistration_select_by_userName_sql(tenant, userName);
   
       if(!records){
         return {exception:{message:"Invalid username or password."}}
@@ -121,6 +121,7 @@ exports.verifySignUp_srv = async (userName, displayName) => {
         displayName,
         profilePic,
         isActive,
+        userRoleId
       } = records;
   
       const inputHashedPassword = encryptPassword(password, passwordSalt);
@@ -134,7 +135,7 @@ exports.verifySignUp_srv = async (userName, displayName) => {
 
       //sign and generate a token
       const accessToken = jwt.sign(
-        { displayName, email, userId, uName,tenantId,stores:userAssignedStores.records },
+        { displayName, email, userId, uName,tenantId,stores:userAssignedStores.records,userRoleId },
         jwtSecret,
         {
           expiresIn: "100d", // Token expires in 1 hour
@@ -178,7 +179,7 @@ exports.verifySignUp_srv = async (userName, displayName) => {
 
       const tenant = await getTenant(tenantId);
   
-      const {records} = await userRegistration_select_sql(tenant, userName);
+      const {records} = await userRegistration_select_by_userName_sql(tenant, userName);
   
       if(!records){
         return {exception:{message:"Invalid username."}}
@@ -223,7 +224,7 @@ exports.verifySignUp_srv = async (userName, displayName) => {
         } = tenentDetailsRes.records;
 
         const tenant = await getTenant(tenantId);
-        const userRegistrationRes = await userRegistration_select_sql(tenant, userName);
+        const userRegistrationRes = await userRegistration_select_by_userName_sql(tenant, userName);
     
         if(!userRegistrationRes.records){
           return {exception:{message:"Invalid username or password."}}
@@ -297,7 +298,7 @@ exports.verifySignUp_srv = async (userName, displayName) => {
         jwtSecret,
       } = tenentDetailsRes.records;
       const tenant = await getTenant(tenantId);
-      const {records} = await userRegistration_select_sql(tenant, userName);
+      const {records} = await userRegistration_select_by_userName_sql(tenant, userName);
   
       if(!records){
         return {exception:{message:"Invalid username or password."}}
