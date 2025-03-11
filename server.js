@@ -51,7 +51,7 @@ routeArr.map((r) => {
   //import routes
    const route = require('./routes/' + r);
   //routes middlewares
-   app.use('/main_api', route);
+   app.use('/api', route);
 });
 
 

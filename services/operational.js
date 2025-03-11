@@ -18,8 +18,9 @@ const {
   restoreDatabase_shcmd
 } = require("../sql_shell_commands/operational");
 const { getTenant } = require("../mysql/tenantList");
-const { encryptPassword } = require("../shared/encrypt");
 const { userRegistration_insert, userRegistration_insert_sql } = require("../sql/auth");
+const { hashPassword } = require("../utils/bcryptHash");
+const { USER_ROLE } = require("../utils/constants");
 
 // Function to generate a random string of a specified length
 function generateRandomString(length) {
@@ -121,7 +122,9 @@ const setupTenant_srv = async (hostName, accUserName, accPassword,displayName,du
     //4. register user in the tenant database
     const tenant = await getTenant(tenantId);
     const passwordSalt = bcrypt.genSaltSync(10);
-    const passwordHash = encryptPassword(accPassword, passwordSalt);
+    const passwordHash =await hashPassword(accPassword);
+    console.log('accPassword---------oooo',accPassword)
+    console.log('passwordHash---------oooo',passwordHash)
 
     const userRegRes = await userRegistration_insert_sql(
       tenant,
@@ -129,7 +132,8 @@ const setupTenant_srv = async (hostName, accUserName, accPassword,displayName,du
       passwordHash,
       passwordSalt,
       userName,
-      displayName
+      displayName,
+      USER_ROLE.ADMIN
     );
     if (userRegRes.exception) {
       return userRegRes;
@@ -244,12 +248,14 @@ exports.removeDBUserAccount_srv = async (dbUsername,hostName) => {
 exports.removeTenancySetup_srv = async (tenantId) => {
   try {
     const conDetailsRes = await get_connectionDetails_by_tenantId_sql(tenantId);
+    console.log("conDetailsRes:", conDetailsRes);
     if (conDetailsRes.exception) {
       return conDetailsRes;
     }
-   
-    const { connectionId, dbName, dbUsername, hostName } = conDetailsRes.records;
+ 
 
+    const { connectionId, dbName, dbUsername, hostName } = conDetailsRes;
+    console.log("removeTenancySetup_srv hostName :", hostName);
     const tenantservres = await get_tenantServerDetailsByHostName_sql(hostName);
     if (tenantservres.exception) {
       return tenantservres;
@@ -260,7 +266,7 @@ exports.removeTenancySetup_srv = async (tenantId) => {
     const adminPassword = password; //"admin@123";
 
     const dbdate = moment().format("YY_MM_DD_HH_mm_ss");
-    console.log("dbdate:", dbdate);
+ 
 
     const dumpFileName = `${dbName}_${dbdate}`;
     const dumpFilePath =process.env.REMOVED_TENANT_DB_BACKUP_PATH; //`F:/Projects/Ongoing_Projects/Legendbit_POS_cloud/backup_db_mysql/removed_db_dumps`;
@@ -384,6 +390,20 @@ exports.createUserAccountForDb_srv = async (dbUsername,dbPassword,dbName,hostNam
     return createDbUserAccountRes;
   } catch (error) {
     console.log("removeTenancySetup_srv()-> err :", error);
+    throw error;
+  }
+};
+
+
+exports.getConnectionDetailsByTenantId_srv = async (tenantId) => {
+  try {
+    const result = await get_connectionDetails_by_tenantId_sql(tenantId);
+    if (result.exception) {
+      return result;
+    }
+    return result;
+  } catch (error) {
+    console.log("getConnectionDetailsByTenantId_srv()-> err :", error);
     throw error;
   }
 };

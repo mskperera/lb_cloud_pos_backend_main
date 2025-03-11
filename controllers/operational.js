@@ -6,7 +6,8 @@ const {
   restoreDatabase_srv,
   removeDBUserAccount_srv,
   createUserAccountForDb_srv,
-  setupTenantToCustomServer_srv
+  setupTenantToCustomServer_srv,
+  getConnectionDetailsByTenantId_srv
 } = require("../services/operational");
 
 exports.restoreDatabase_ctrl = async (req, res) => {
@@ -216,6 +217,30 @@ exports.createUserAccountForDb_ctrl = async (req, res) => {
     }
 
     res.status(200).json(reateUserAccountForDbRes);
+
+  } catch (err) {
+    //res.status(400).json({message: err.message});
+    console.log("createUserAccountForDb_ctrl() -> error: ", err);
+    res.status(500).json({error:'Something is wrong, please contact the service provider.'});
+  }
+};
+
+exports.getConnectionDetailsByTenantId_ctrl = async (req, res) => {
+  const { tenantId } = req.query;
+
+  if (!tenantId) {
+    return res.status(422).json({
+      error: "tenantId is Required",
+    });
+  }
+
+  try {
+  const result= await getConnectionDetailsByTenantId_srv(tenantId);
+    if(result.exception){
+      return res.status(400).json(result);
+    }
+
+    res.status(200).json(result);
 
   } catch (err) {
     //res.status(400).json({message: err.message});

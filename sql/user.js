@@ -5,7 +5,7 @@ const {
 const mysql = require("mysql2");
 const util = require("util");
 const { exec } = require("child_process");
-const { SP_STATUS } = require("../constants");
+const { SP_STATUS } = require("../constants/constants");
 const {
   executeStoredProcedureWithOutputParamsByPool,
   executeSqlQueryWithOutputParamsByPool,

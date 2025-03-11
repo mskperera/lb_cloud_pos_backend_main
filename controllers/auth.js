@@ -95,6 +95,10 @@ exports.completeSignup_ctrl = async (req, res) => {
 exports.login_ctrl = async (req, res) => {
   const { userName, password } = req.body;
 
+  // return res.json({
+  //   req
+  // });
+
   try {
     if (!userName) {
       return res.status(422).json({
@@ -108,7 +112,7 @@ exports.login_ctrl = async (req, res) => {
       });
     }
 
-    const loginRes = await login_srv(userName, password);
+    const loginRes = await login_srv(userName, password ,'ipAddress',330,'pageName');
 
     console.log('loginRes',loginRes);
     if (loginRes.exception) {
@@ -119,7 +123,9 @@ exports.login_ctrl = async (req, res) => {
       httpOnly: true,
       expiresIn: "1d",
     });
-    res.status(200).json({ accessToken: loginRes.accessToken });
+
+  const {uName,email,displayName,profilePic}=  loginRes;
+    res.status(200).json({ accessToken: loginRes.accessToken,uName,email,displayName,profilePic });
 
     //res.status(200).json(loginRes );
   } catch (error) {
