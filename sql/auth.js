@@ -48,8 +48,11 @@ exports.userRegistration_insert_sql = async (
   passwordHash,
   passwordSalt,
   email,
-  displayName
+  displayName,
+  userRoleId
 ) => {
+
+  console.log('passwordHash---------',passwordHash)
   const functionName = "userRegistration_insert_sql()";
   try {
     const { pool } = tenant;
@@ -59,6 +62,7 @@ exports.userRegistration_insert_sql = async (
       passwordSalt,
       email,
       displayName,
+      userRoleId
     ];
     const procedureOutputParameters = ["responseStatus", "outputMessage"];
     const procedureName = "userRegistration_insert";
@@ -135,38 +139,3 @@ exports.userPassword_update_sql = async (
   }
 };
 
-exports.userAssignedStores_select_sql = async (tenant, userId) => {
-  const functionName = "userAssignedStores_select_sql()";
-  try {
-    const { pool } = tenant;
-    const procedureParameters = [userId];
-    const procedureOutputParameters = [];
-    const procedureName = "userAssignedStores_select";
-    const result = await executeStoredProcedureWithOutputParamsByPool(
-      procedureName,
-      procedureParameters,
-      procedureOutputParameters,
-      pool
-    );
-
-    const { responseStatus, outputMessage } = result.outputValues;
-    if (responseStatus === SP_STATUS.failed) {
-      console.log(
-        consoleExceptionText,
-        `${functionName} -> exception:`,
-        outputMessage
-      );
-      return { exception: { message: outputMessage } };
-    }
-    const message = outputMessage;
-    console.log(consoleSuccessText, `${functionName} -> success: ${message} `);
-    return {
-      message,
-      records: result.results[0],
-      values: result.outputValues,
-    };
-  } catch (error) {
-    console.error(consoleErrorText, `${functionName} -> error :`, error);
-    throw error;
-  }
-};

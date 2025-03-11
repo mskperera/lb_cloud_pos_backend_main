@@ -8,6 +8,7 @@ const { setupTenant_srv, setupTenantToDefaultServer_srv } = require("./operation
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { hashPassword, comparePassword } = require("../utils/bcryptHash");
+const { userLogInsertUpdate_sql } = require("../sql/log");
 
 exports.verifySignUp_srv = async (userName, displayName) => {
   
@@ -85,7 +86,7 @@ exports.verifySignUp_srv = async (userName, displayName) => {
     }
   };
 
-  exports.login_srv = async (userName, password ) => {
+  exports.login_srv = async (userName, password ,ipAddress,utcOffset,pageName) => {
   
     try {
       //1.check user exists in main db; if not exists() return faild;
@@ -128,27 +129,31 @@ exports.verifySignUp_srv = async (userName, displayName) => {
       }
 
       const isMatch = await comparePassword(password, passwordHash);
+
+      const loginStatus=isMatch ? "Success":"Failed";
+      const userLog=await userLogInsertUpdate_sql(tenant, userId,loginStatus,ipAddress,'userAgent','sessionId','additionalInfo',utcOffset,pageName)
+      console.log("userLog ooooooo:", userLog);
+
       if (!isMatch) {
         return {exception:{message:"Invalid User Name or Password."}}
       }
 
-    const userAssignedStores=await userAssignedStores_select_sql(tenant,userId);
-
       const accessToken = jwt.sign(
-        { displayName, email, userId, uName,tenantId,stores:userAssignedStores.records,userRoleId },
+        { displayName, email, userId, uName,tenantId,userRoleId,
+          userLogId:userLog.values.userLogId,timeZoneId:1,utcOffset:330 },
         jwtSecret,
         {
           expiresIn: "100d",
         }
       );
-      console.log("userAssignedStores:", userAssignedStores.records);
+  
   
       return {
         accessToken,
         message: "Successful login has been completed.",
-        uName,email,displayName,profilePic
-        
+        uName,email,displayName,profilePic  
       };
+
     } catch (error) {
         console.log("login_srv()-> err :", error);
         throw error;

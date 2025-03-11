@@ -95,6 +95,10 @@ exports.completeSignup_ctrl = async (req, res) => {
 exports.login_ctrl = async (req, res) => {
   const { userName, password } = req.body;
 
+  // return res.json({
+  //   req
+  // });
+
   try {
     if (!userName) {
       return res.status(422).json({
@@ -108,7 +112,7 @@ exports.login_ctrl = async (req, res) => {
       });
     }
 
-    const loginRes = await login_srv(userName, password);
+    const loginRes = await login_srv(userName, password ,'ipAddress',330,'pageName');
 
     console.log('loginRes',loginRes);
     if (loginRes.exception) {
