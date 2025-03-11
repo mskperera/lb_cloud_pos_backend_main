@@ -4,7 +4,6 @@ const executeStoredProcedureWithOutputParamsByPool = async (procedureName, input
     const inputPlaceholders = inputParameters.map(() => '?').join(', ');
     const outputPlaceholders =outputParameters.length!==0? (',' +outputParameters.map((paramName) => `@${paramName}`).join(', ')) :'';
 
-    // Create a SQL query with both input and output parameters
     const sqlQuery = `CALL ${procedureName}(${inputPlaceholders} ${outputPlaceholders})`;
 
     pool.getConnection((err, connection) => {
@@ -70,7 +69,6 @@ const executeSqlQueryWithOutputParamsByPool = async (sqlQuery, inputParameters, 
     const inputPlaceholders = inputParameters.map(() => '?').join(', ');
     const outputPlaceholders = outputParameters.length !== 0 ? (',' + outputParameters.map((paramName) => `@${paramName}`).join(', ')) : '';
 
-    // Create a SQL query with both input and output parameters
     const fullSqlQuery = `${sqlQuery} ${outputPlaceholders}`;
 
     pool.getConnection((err, connection) => {
@@ -87,10 +85,8 @@ const executeSqlQueryWithOutputParamsByPool = async (sqlQuery, inputParameters, 
           return;
         }
 
-        // Create an object to store the output parameter values
         const outputValues = {};
 
-        // Wait for all output parameter queries to complete
         Promise.all(
           outputParameters.map((paramName) =>
             new Promise((resolve) => {

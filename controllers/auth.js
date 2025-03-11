@@ -4,6 +4,7 @@ const {
   login_srv,
   resetForgotPasswordVerify_srv,
   resetForgotPassword_srv,
+  crpLogin_srv,
 } = require("../services/auth");
 
 exports.verifySignUp_ctrl = async (req, res) => {
@@ -89,8 +90,14 @@ exports.completeSignup_ctrl = async (req, res) => {
   }
 };
 
+
+
 exports.login_ctrl = async (req, res) => {
   const { userName, password } = req.body;
+
+  // return res.json({
+  //   req
+  // });
 
   try {
     if (!userName) {
@@ -105,7 +112,7 @@ exports.login_ctrl = async (req, res) => {
       });
     }
 
-    const loginRes = await login_srv(userName, password);
+    const loginRes = await login_srv(userName, password ,'ipAddress',330,'pageName');
 
     console.log('loginRes',loginRes);
     if (loginRes.exception) {
@@ -116,7 +123,9 @@ exports.login_ctrl = async (req, res) => {
       httpOnly: true,
       expiresIn: "1d",
     });
-    res.status(200).json({ accessToken: loginRes.accessToken });
+
+  const {uName,email,displayName,profilePic}=  loginRes;
+    res.status(200).json({ accessToken: loginRes.accessToken,uName,email,displayName,profilePic });
 
     //res.status(200).json(loginRes );
   } catch (error) {
@@ -180,4 +189,47 @@ exports.resetForgotPassword_ctrl = async (req, res) => {
 exports.logout = (req, res) => {
   res.clearCookie("accessToken");
   res.sendStatus(204);
+};
+
+
+
+
+exports.crpLogin_ctrl = async (req, res) => {
+  const { userName, password } = req.body;
+
+  try {
+    if (!userName) {
+      return res.status(422).json({
+        error: "User Name is Required",
+      });
+    }
+
+    if (!password) {
+      return res.status(422).json({
+        error: "Password is Required",
+      });
+    }
+
+    const loginRes = await crpLogin_srv(userName, password);
+
+    console.log('loginRes',loginRes);
+    if (loginRes.exception) {
+      return res.status(401).json(loginRes);
+    }
+
+    res.cookie("accessToken", loginRes.accessToken, {
+      httpOnly: true,
+      expiresIn: "100d",
+    });
+    res.status(200).json(loginRes);
+
+    //res.status(200).json(loginRes );
+  } catch (error) {
+    console.log("login_ctrl() -> error: ", error);
+    res
+      .status(500)
+      .json({
+        error: "Something is wrong, please contact the service provider.",
+      });
+  }
 };

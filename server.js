@@ -8,23 +8,10 @@ const cors = require('cors');
 
 const morgan = require('morgan');
 const { readdirSync } = require('fs');
-const { test } = require('./mysql');
 
 //test();
 
 module.exports=app;
-// //connection string
-// var connectionString = process.env.DATABASE_MSSQL;
-
-// sql
-//   .connect(connectionString)
-//   .then(() => {
-//     console.log('MsSql Connected.');
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
-
 
 //middlewares
 app.use(morgan('dev'));
@@ -33,8 +20,29 @@ app.use(cookieParser());
 
 //cors
 //if (process.env.NODE_ENV === "development") {
-app.use(cors({ origin: `${process.env.CLIENT_URL}` }));
+//app.use(cors({ origin: `${process.env.CLIENT_URL}` }));
 //}
+// Extract allowed origins from environment variable
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin, like mobile apps or curl requests
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Enable cookies and other credentials
+};
+
+// Use CORS middleware
+app.use(cors(corsOptions));
+
 
 //reoutes middlewares
 
@@ -59,15 +67,6 @@ app.use("/", (req, res) => {
   res.json({ message: "Api is working..." });
 });
 
-
-// const getproductid=async ()=>{
-//   const dc_ProductId=await get_DC_ProductIdByProductId(10);
-
-//   console.log('getDC_ProductIdByProductId',dc_ProductId);
-  
-// }
-
-// getproductid();
 
 //port
 const port = process.env.PORT || 7000;

@@ -3,12 +3,12 @@ const {
   mainDbConnection_error_handler_pool,
 } = require("../mysql/main_db_connection");
 const mysql = require("mysql2");
-const { SP_STATUS } = require("../constants");
+const { SP_STATUS } = require("../constants/constants");
 const {
   executeStoredProcedureWithOutputParamsByPool,
   executeSqlQueryWithOutputParamsByPool,
 } = require("../mysql/sql_executer");
-const {CONSOLE_TEXT_COLORS} =require('../constants')
+const {CONSOLE_TEXT_COLORS} =require('../constants/constants')
 const {consoleSuccessText,consoleErrorText,consoleExceptionText }=CONSOLE_TEXT_COLORS;
 
 
@@ -506,6 +506,29 @@ exports.user_verification_delete_sql = async (
     };
   } catch (error) {
     console.error(consoleErrorText, `${functionName} -> error :`, error);
+    throw error;
+  }
+};
+
+exports.get_connectionDetails_by_tenantId_sql = async (tenantId) => {
+  try {
+    const procedureParameters = [tenantId];
+    const procedureOutputParameters = ["responseStatus", "outputMessage"];
+    const procedureName = "get_connectionDetails_by_tenantId";
+    const result = await executeStoredProcedureWithOutputParamsByPool(
+      procedureName,
+      procedureParameters,
+      procedureOutputParameters,
+      mainDbConnection_pool
+    );
+    const { responseStatus, outputMessage } = result.outputValues;
+
+    if (responseStatus === SP_STATUS.failed) {
+      throw { message: outputMessage };
+    }
+
+    return result.results[0][0];
+  } catch (error) {
     throw error;
   }
 };

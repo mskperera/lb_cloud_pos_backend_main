@@ -1,18 +1,18 @@
-const { SP_STATUS } = require("../constants");
+const { SP_STATUS } = require("../constants/constants");
 const {
   executeStoredProcedureWithOutputParamsByPool,
 } = require("../mysql/sql_executer");
 
-const {CONSOLE_TEXT_COLORS} =require('../constants')
+const {CONSOLE_TEXT_COLORS} =require('../constants/constants')
 const {consoleSuccessText,consoleErrorText,consoleExceptionText }=CONSOLE_TEXT_COLORS;
 
-exports.userRegistration_select_sql = async (tenant, userName) => {
-  const functionName = "userRegistration_select_sql()";
+exports.userRegistration_select_by_userName_sql = async (tenant, userName) => {
+  const functionName = "userRegistration_select_by_userName_sql()";
   try {
     const { pool } = tenant;
     const procedureParameters = [userName];
     const procedureOutputParameters = ["responseStatus", "outputMessage"];
-    const procedureName = "userRegistration_select";
+    const procedureName = "userRegistration_select_by_userName";
     const result = await executeStoredProcedureWithOutputParamsByPool(
       procedureName,
       procedureParameters,
@@ -48,8 +48,11 @@ exports.userRegistration_insert_sql = async (
   passwordHash,
   passwordSalt,
   email,
-  displayName
+  displayName,
+  userRoleId
 ) => {
+
+  console.log('passwordHash---------',passwordHash)
   const functionName = "userRegistration_insert_sql()";
   try {
     const { pool } = tenant;
@@ -59,6 +62,7 @@ exports.userRegistration_insert_sql = async (
       passwordSalt,
       email,
       displayName,
+      userRoleId
     ];
     const procedureOutputParameters = ["responseStatus", "outputMessage"];
     const procedureName = "userRegistration_insert";
@@ -134,5 +138,4 @@ exports.userPassword_update_sql = async (
     throw error;
   }
 };
-
 

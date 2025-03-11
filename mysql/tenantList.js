@@ -27,8 +27,9 @@ const getTenant=async(tenantId)=>{
   if (!foundTenant) {
 
     const tenant = await get_connectionDetails_by_tenantId_sql(tenantId);
-    const { connectionId, hostName, dbUsername, dbPassword, dbName,port } = tenant.records;
-    console.log('tenant poollist',tenant.records);
+    console.log('tenant  ',tenant);
+    const { connectionId, hostName, dbUsername, dbPassword, dbName,port } = tenant;
+   
     // Create a connection pool
     const pool = mysql.createPool({
       connectionLimit: 40, // Number of connections to create
