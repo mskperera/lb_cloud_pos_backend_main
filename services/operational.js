@@ -155,14 +155,13 @@ const setupTenant_srv = async (hostName, accUserName, accPassword,displayName,du
 };
 
 exports.setupTenantToCustomServer_srv = async (
-  hostName,accEmail, accPassword
+  hostName,accEmail, accPassword,displayName
 ) => {
   try {
 
-
     const dumpFile2 =process.env.LATEST_RELEASE_DUMP_PATH;
 
-    return await setupTenant_srv(hostName,accEmail, accPassword,accEmail,dumpFile2);
+    return await setupTenant_srv(hostName,accEmail, accPassword,displayName,dumpFile2);
 
   } catch (err) {
     console.log("setupTenantToCustomServer_srv()-> err :", err);

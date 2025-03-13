@@ -103,8 +103,14 @@ exports.removeDBUserAccount_ctrl = async (req, res) => {
 };
 
 exports.initializeDbAndConnection_ctrl = async (req, res) => {
-  const { accEmail, accPassword,hostName } = req.body;
+  const { displayName,accEmail, accPassword,hostName } = req.body;
   
+  if (!displayName) {
+    return res.status(422).json({
+      error: "displayName is Required",
+    });
+  }
+
   if (!hostName) {
     return res.status(422).json({
       error: "hostName is Required",
@@ -125,7 +131,7 @@ exports.initializeDbAndConnection_ctrl = async (req, res) => {
 
   try {
 
-    const setupTenantRes= await setupTenantToCustomServer_srv(hostName,accEmail, accPassword);
+    const setupTenantRes= await setupTenantToCustomServer_srv(hostName,accEmail, accPassword,displayName);
 
    if(setupTenantRes.exception){
     return res.status(400).json(setupTenantRes);
