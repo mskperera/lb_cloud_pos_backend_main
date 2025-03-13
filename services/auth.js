@@ -143,7 +143,7 @@ exports.verifySignUp_srv = async (userName, displayName) => {
           userLogId:userLog.values.userLogId,timeZoneId:1,utcOffset:330 },
         jwtSecret,
         {
-          expiresIn: "100d",
+          expiresIn: "7d",
         }
       );
   
