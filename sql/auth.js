@@ -52,7 +52,7 @@ exports.userRegistration_insert_sql = async (
   userRoleId
 ) => {
 
-  console.log('passwordHash---------',passwordHash)
+  //console.log('passwordHash---------',passwordHash)
   const functionName = "userRegistration_insert_sql()";
   try {
     const { pool } = tenant;
