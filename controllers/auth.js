@@ -7,6 +7,10 @@ const {
   crpLogin_srv,
 } = require("../services/auth");
 
+
+const UAParser = require("ua-parser-js");
+
+
 exports.verifySignUp_ctrl = async (req, res) => {
   const { userName, password, displayName } = req.body;
 
@@ -95,6 +99,27 @@ exports.completeSignup_ctrl = async (req, res) => {
 exports.login_ctrl = async (req, res) => {
   const { userName, password } = req.body;
 
+    let clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+
+    // If multiple IPs are forwarded, take the first one
+    if (clientIp.includes(",")) {
+      clientIp = clientIp.split(",")[0].trim();
+    }
+  
+  // Get Client Platform Information
+  const userAgent = req.headers["user-agent"];
+  const parser = new UAParser(userAgent);
+  const clientPlatform = {
+    os: parser.getOS().name + " " + parser.getOS().version,
+    browser: parser.getBrowser().name + " " + parser.getBrowser().version,
+    device: parser.getDevice().model || "Unknown Device",
+  };
+
+  console.log("Client IP:", clientIp);
+  console.log("Client Platform:", clientPlatform);
+  
+  const clientPlatform_str=JSON.stringify(clientPlatform);
+
   // return res.json({
   //   req
   // });
@@ -112,7 +137,7 @@ exports.login_ctrl = async (req, res) => {
       });
     }
 
-    const loginRes = await login_srv(userName, password ,'ipAddress',330,'pageName');
+    const loginRes = await login_srv(userName, password ,clientIp,clientPlatform_str,330,'pageName');
 
     console.log('loginRes',loginRes);
     if (loginRes.exception) {
