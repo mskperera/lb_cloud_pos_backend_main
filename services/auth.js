@@ -86,7 +86,7 @@ exports.verifySignUp_srv = async (userName, displayName) => {
     }
   };
 
-  exports.login_srv = async (userName, password ,ipAddress,utcOffset,pageName) => {
+  exports.login_srv = async (userName, password ,ipAddress,clientPlatform,utcOffset,pageName) => {
   
     try {
       //1.check user exists in main db; if not exists() return faild;
@@ -131,7 +131,7 @@ exports.verifySignUp_srv = async (userName, displayName) => {
       const isMatch = await comparePassword(password, passwordHash);
 
       const loginStatus=isMatch ? "Success":"Failed";
-      const userLog=await userLogInsertUpdate_sql(tenant, userId,loginStatus,ipAddress,'userAgent','sessionId','additionalInfo',utcOffset,pageName)
+      const userLog=await userLogInsertUpdate_sql(tenant, userId,loginStatus,ipAddress,clientPlatform,'sessionId','additionalInfo',utcOffset,pageName)
       console.log("userLog ooooooo:", userLog);
 
       if (!isMatch) {
